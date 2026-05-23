@@ -68,6 +68,40 @@ export interface DeleteResult {
   success: boolean;
 }
 
+export interface PasswordInput {
+  /** @minLength 1 */
+  password: string;
+}
+
+export interface PasswordChecks {
+  length_8: boolean;
+  length_12: boolean;
+  has_uppercase: boolean;
+  has_lowercase: boolean;
+  has_digit: boolean;
+  has_special: boolean;
+  no_common: boolean;
+  no_repeated: boolean;
+  no_sequential: boolean;
+  no_keyboard_walk: boolean;
+}
+
+export interface PasswordResult {
+  passwordLength: number;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  score: number;
+  grade: string;
+  strength: string;
+  checks: PasswordChecks;
+  feedback: string[];
+  suggestions: string[];
+  entropy: number;
+  timeToCrack: string;
+}
+
 export interface ErrorResponse {
   error: string;
 }

@@ -28,6 +28,8 @@ import type {
   HealthStatus,
   HistoryResponse,
   HistoryStats,
+  PasswordInput,
+  PasswordResult,
   UrlInput
 } from './api.schemas';
 
@@ -414,6 +416,77 @@ export const useDeleteScan = <TError = ErrorType<ErrorResponse>,
         TContext
       > => {
       return useMutation(getDeleteScanMutationOptions(options));
+    }
+
+export const getCheckPasswordUrl = () => {
+
+
+
+
+  return `/api/password/check`
+}
+
+/**
+ * @summary Check password strength
+ */
+export const checkPassword = async (passwordInput: PasswordInput, options?: RequestInit): Promise<PasswordResult> => {
+
+  return customFetch<PasswordResult>(getCheckPasswordUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      passwordInput,)
+  }
+);}
+
+
+
+
+export const getCheckPasswordMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof checkPassword>>, TError,{data: BodyType<PasswordInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof checkPassword>>, TError,{data: BodyType<PasswordInput>}, TContext> => {
+
+const mutationKey = ['checkPassword'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof checkPassword>>, {data: BodyType<PasswordInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  checkPassword(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CheckPasswordMutationResult = NonNullable<Awaited<ReturnType<typeof checkPassword>>>
+    export type CheckPasswordMutationBody = BodyType<PasswordInput>
+    export type CheckPasswordMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Check password strength
+ */
+export const useCheckPassword = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof checkPassword>>, TError,{data: BodyType<PasswordInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof checkPassword>>,
+        TError,
+        {data: BodyType<PasswordInput>},
+        TContext
+      > => {
+      return useMutation(getCheckPasswordMutationOptions(options));
     }
 
 export const getGetHistoryStatsUrl = () => {

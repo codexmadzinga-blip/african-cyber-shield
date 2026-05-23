@@ -109,6 +109,45 @@ export const DeleteScanResponse = zod.object({
 
 
 /**
+ * @summary Check password strength
+ */
+
+
+
+export const CheckPasswordBody = zod.object({
+  "password": zod.string().min(1)
+})
+
+export const checkPasswordResponseScoreMin = 0;
+export const checkPasswordResponseScoreMax = 100;
+
+
+
+export const CheckPasswordResponse = zod.object({
+  "passwordLength": zod.number(),
+  "score": zod.number().min(checkPasswordResponseScoreMin).max(checkPasswordResponseScoreMax),
+  "grade": zod.string(),
+  "strength": zod.string(),
+  "checks": zod.object({
+  "length_8": zod.boolean(),
+  "length_12": zod.boolean(),
+  "has_uppercase": zod.boolean(),
+  "has_lowercase": zod.boolean(),
+  "has_digit": zod.boolean(),
+  "has_special": zod.boolean(),
+  "no_common": zod.boolean(),
+  "no_repeated": zod.boolean(),
+  "no_sequential": zod.boolean(),
+  "no_keyboard_walk": zod.boolean()
+}),
+  "feedback": zod.array(zod.string()),
+  "suggestions": zod.array(zod.string()),
+  "entropy": zod.number(),
+  "timeToCrack": zod.string()
+})
+
+
+/**
  * @summary Aggregate stats across all scans
  */
 export const GetHistoryStatsResponse = zod.object({
