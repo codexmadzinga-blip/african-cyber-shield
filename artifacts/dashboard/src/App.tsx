@@ -9,6 +9,7 @@ import Batch from "@/pages/batch";
 import About from "@/pages/about";
 import HistoryPage from "@/pages/history";
 import PasswordPage from "@/pages/password";
+import TwoFactorPage from "@/pages/two-factor";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/batch" component={Batch} />
       <Route path="/history" component={HistoryPage} />
       <Route path="/password" component={PasswordPage} />
+      <Route path="/2fa" component={TwoFactorPage} />
       <Route path="/about" component={About} />
       <Route component={NotFound} />
     </Switch>
