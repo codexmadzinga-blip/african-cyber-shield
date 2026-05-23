@@ -17,7 +17,8 @@ import {
   Shield, 
   AlertTriangle,
   Activity,
-  AlertOctagon
+  AlertOctagon,
+  Download
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -57,6 +58,33 @@ export default function HistoryPage() {
   );
 
   const deleteScan = useDeleteScan();
+
+  const handleExportCSV = () => {
+    const scans = historyData?.scans ?? [];
+    if (scans.length === 0) {
+      toast({ title: "Nothing to export", description: "No scan records found." });
+      return;
+    }
+    const headers = ["ID", "URL", "Score", "Verdict", "Risk Level", "Flags", "Scanned At"];
+    const rows = scans.map((s) => [
+      s.id,
+      `"${s.url.replace(/"/g, '""')}"`,
+      s.score,
+      s.verdict,
+      s.riskLevel,
+      `"${s.flags.join("; ").replace(/"/g, '""')}"`,
+      format(new Date(s.createdAt), "yyyy-MM-dd HH:mm:ss"),
+    ]);
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `african-cyber-shield-scans-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "Export successful", description: `${scans.length} record${scans.length !== 1 ? "s" : ""} downloaded.` });
+  };
 
   const handleDelete = (id: number) => {
     deleteScan.mutate({ id }, {
@@ -198,6 +226,17 @@ export default function HistoryPage() {
                 <SelectItem value="CRITICAL">Critical Risk</SelectItem>
               </SelectContent>
             </Select>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportCSV}
+              disabled={!historyData || historyData.scans.length === 0}
+              data-testid="button-export-csv"
+              className="flex items-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export CSV
+            </Button>
           </div>
         </CardHeader>
         <CardContent className="p-0">
