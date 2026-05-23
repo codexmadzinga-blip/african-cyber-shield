@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: phishing
+    description: Phishing URL detection
 paths:
   /healthz:
     get:
@@ -24,6 +26,58 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /analyze:
+    post:
+      operationId: analyzeUrl
+      tags: [phishing]
+      summary: Analyze a URL for phishing indicators
+      description: Runs heuristic analysis on a URL and returns a risk score, verdict, and list of flags.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UrlInput"
+      responses:
+        "200":
+          description: Analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResult"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /analyze/batch:
+    post:
+      operationId: analyzeUrlBatch
+      tags: [phishing]
+      summary: Analyze multiple URLs
+      description: Runs heuristic analysis on up to 20 URLs at once.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BatchUrlInput"
+      responses:
+        "200":
+          description: List of analysis results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AnalysisResult"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +87,55 @@ components:
           type: string
       required:
         - status
-
+    UrlInput:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          minLength: 1
+    BatchUrlInput:
+      type: object
+      required:
+        - urls
+      properties:
+        urls:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 20
+    AnalysisResult:
+      type: object
+      required:
+        - url
+        - score
+        - verdict
+        - riskLevel
+        - flags
+      properties:
+        url:
+          type: string
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        verdict:
+          type: string
+        riskLevel:
+          type: string
+        flags:
+          type: array
+          items:
+            type: string
+        details:
+          type: object
+          additionalProperties: true
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
