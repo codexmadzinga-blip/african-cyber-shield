@@ -4,7 +4,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { name: "URL Analyzer", href: "/", icon: LayoutDashboard },
+  { name: "URL Analyzer", href: "/analyzer", icon: LayoutDashboard },
   { name: "Batch Scanner", href: "/batch", icon: List },
   { name: "Scan History", href: "/history", icon: HistoryIcon },
   { name: "Password Checker", href: "/password", icon: KeyRound },

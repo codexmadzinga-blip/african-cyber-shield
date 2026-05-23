@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import { Layout } from "@/components/layout";
+import LandingPage from "@/pages/landing";
 import Home from "@/pages/home";
 import Batch from "@/pages/batch";
 import About from "@/pages/about";
@@ -13,15 +14,28 @@ import TwoFactorPage from "@/pages/two-factor";
 
 const queryClient = new QueryClient();
 
-function Router() {
+function AppRoutes() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/batch" component={Batch} />
-      <Route path="/history" component={HistoryPage} />
-      <Route path="/password" component={PasswordPage} />
-      <Route path="/2fa" component={TwoFactorPage} />
-      <Route path="/about" component={About} />
+      <Route path="/" component={LandingPage} />
+      <Route path="/analyzer">
+        <Layout><Home /></Layout>
+      </Route>
+      <Route path="/batch">
+        <Layout><Batch /></Layout>
+      </Route>
+      <Route path="/history">
+        <Layout><HistoryPage /></Layout>
+      </Route>
+      <Route path="/password">
+        <Layout><PasswordPage /></Layout>
+      </Route>
+      <Route path="/2fa">
+        <Layout><TwoFactorPage /></Layout>
+      </Route>
+      <Route path="/about">
+        <Layout><About /></Layout>
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );
@@ -32,9 +46,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Layout>
-            <Router />
-          </Layout>
+          <AppRoutes />
         </WouterRouter>
         <Toaster />
       </TooltipProvider>
