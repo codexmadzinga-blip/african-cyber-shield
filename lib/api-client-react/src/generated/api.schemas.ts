@@ -37,7 +37,47 @@ export interface AnalysisResult {
   details?: AnalysisResultDetails;
 }
 
+export type ScanRecordDetails = { [key: string]: unknown };
+
+export interface ScanRecord {
+  id: number;
+  url: string;
+  score: number;
+  verdict: string;
+  riskLevel: string;
+  flags: string[];
+  details?: ScanRecordDetails;
+  createdAt: string;
+}
+
+export interface HistoryResponse {
+  scans: ScanRecord[];
+  total: number;
+}
+
+export interface HistoryStats {
+  total: number;
+  safe: number;
+  suspicious: number;
+  likelyPhishing: number;
+  phishing: number;
+  avgScore: number;
+}
+
+export interface DeleteResult {
+  success: boolean;
+}
+
 export interface ErrorResponse {
   error: string;
 }
+
+export type GetHistoryParams = {
+/**
+ * @minimum 1
+ * @maximum 100
+ */
+limit?: number;
+riskLevel?: string;
+};
 

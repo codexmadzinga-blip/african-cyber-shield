@@ -7,6 +7,7 @@ import { Layout } from "@/components/layout";
 import Home from "@/pages/home";
 import Batch from "@/pages/batch";
 import About from "@/pages/about";
+import HistoryPage from "@/pages/history";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/batch" component={Batch} />
+      <Route path="/history" component={HistoryPage} />
       <Route path="/about" component={About} />
       <Route component={NotFound} />
     </Switch>

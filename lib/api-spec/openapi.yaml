@@ -12,13 +12,14 @@ tags:
     description: Health operations
   - name: phishing
     description: Phishing URL detection
+  - name: history
+    description: Scan history
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -31,7 +32,6 @@ paths:
       operationId: analyzeUrl
       tags: [phishing]
       summary: Analyze a URL for phishing indicators
-      description: Runs heuristic analysis on a URL and returns a risk score, verdict, and list of flags.
       requestBody:
         required: true
         content:
@@ -56,7 +56,6 @@ paths:
       operationId: analyzeUrlBatch
       tags: [phishing]
       summary: Analyze multiple URLs
-      description: Runs heuristic analysis on up to 20 URLs at once.
       requestBody:
         required: true
         content:
@@ -78,27 +77,84 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /history:
+    get:
+      operationId: getHistory
+      tags: [history]
+      summary: Get recent scan history
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - in: query
+          name: riskLevel
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of past scans
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HistoryResponse"
+  /history/{id}:
+    delete:
+      operationId: deleteScan
+      tags: [history]
+      summary: Delete a scan record
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResult"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /history/stats:
+    get:
+      operationId: getHistoryStats
+      tags: [history]
+      summary: Aggregate stats across all scans
+      responses:
+        "200":
+          description: Stats summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HistoryStats"
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
     UrlInput:
       type: object
-      required:
-        - url
+      required: [url]
       properties:
         url:
           type: string
           minLength: 1
     BatchUrlInput:
       type: object
-      required:
-        - urls
+      required: [urls]
       properties:
         urls:
           type: array
@@ -108,12 +164,7 @@ components:
           maxItems: 20
     AnalysisResult:
       type: object
-      required:
-        - url
-        - score
-        - verdict
-        - riskLevel
-        - flags
+      required: [url, score, verdict, riskLevel, flags]
       properties:
         url:
           type: string
@@ -132,10 +183,65 @@ components:
         details:
           type: object
           additionalProperties: true
+    ScanRecord:
+      type: object
+      required: [id, url, score, verdict, riskLevel, flags, createdAt]
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+        score:
+          type: integer
+        verdict:
+          type: string
+        riskLevel:
+          type: string
+        flags:
+          type: array
+          items:
+            type: string
+        details:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+    HistoryResponse:
+      type: object
+      required: [scans, total]
+      properties:
+        scans:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScanRecord"
+        total:
+          type: integer
+    HistoryStats:
+      type: object
+      required: [total, safe, suspicious, likelyPhishing, phishing, avgScore]
+      properties:
+        total:
+          type: integer
+        safe:
+          type: integer
+        suspicious:
+          type: integer
+        likelyPhishing:
+          type: integer
+        phishing:
+          type: integer
+        avgScore:
+          type: number
+    DeleteResult:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
     ErrorResponse:
       type: object
-      required:
-        - error
+      required: [error]
       properties:
         error:
           type: string

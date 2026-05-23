@@ -1,11 +1,12 @@
 import { Link, useLocation } from "wouter";
-import { Shield, LayoutDashboard, List, Info, Menu } from "lucide-react";
+import { Shield, LayoutDashboard, List, Info, Menu, History as HistoryIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { name: "URL Analyzer", href: "/", icon: LayoutDashboard },
   { name: "Batch Scanner", href: "/batch", icon: List },
+  { name: "Scan History", href: "/history", icon: HistoryIcon },
   { name: "About", href: "/about", icon: Info },
 ];
 

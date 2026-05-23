@@ -22,8 +22,12 @@ import type {
 import type {
   AnalysisResult,
   BatchUrlInput,
+  DeleteResult,
   ErrorResponse,
+  GetHistoryParams,
   HealthStatus,
+  HistoryResponse,
+  HistoryStats,
   UrlInput
 } from './api.schemas';
 
@@ -48,7 +52,6 @@ export const getHealthCheckUrl = () => {
 }
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const healthCheck = async ( options?: RequestInit): Promise<HealthStatus> => {
@@ -126,7 +129,6 @@ export const getAnalyzeUrlUrl = () => {
 }
 
 /**
- * Runs heuristic analysis on a URL and returns a risk score, verdict, and list of flags.
  * @summary Analyze a URL for phishing indicators
  */
 export const analyzeUrl = async (urlInput: UrlInput, options?: RequestInit): Promise<AnalysisResult> => {
@@ -198,7 +200,6 @@ export const getAnalyzeUrlBatchUrl = () => {
 }
 
 /**
- * Runs heuristic analysis on up to 20 URLs at once.
  * @summary Analyze multiple URLs
  */
 export const analyzeUrlBatch = async (batchUrlInput: BatchUrlInput, options?: RequestInit): Promise<AnalysisResult[]> => {
@@ -260,4 +261,235 @@ export const useAnalyzeUrlBatch = <TError = ErrorType<ErrorResponse>,
       > => {
       return useMutation(getAnalyzeUrlBatchMutationOptions(options));
     }
+
+export const getGetHistoryUrl = (params?: GetHistoryParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/history?${stringifiedParams}` : `/api/history`
+}
+
+/**
+ * @summary Get recent scan history
+ */
+export const getHistory = async (params?: GetHistoryParams, options?: RequestInit): Promise<HistoryResponse> => {
+
+  return customFetch<HistoryResponse>(getGetHistoryUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetHistoryQueryKey = (params?: GetHistoryParams,) => {
+    return [
+    `/api/history`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getHistory>>, TError = ErrorType<unknown>>(params?: GetHistoryParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getHistory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetHistoryQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getHistory>>> = ({ signal }) => getHistory(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getHistory>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetHistoryQueryResult = NonNullable<Awaited<ReturnType<typeof getHistory>>>
+export type GetHistoryQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get recent scan history
+ */
+
+export function useGetHistory<TData = Awaited<ReturnType<typeof getHistory>>, TError = ErrorType<unknown>>(
+ params?: GetHistoryParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getHistory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetHistoryQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export const getDeleteScanUrl = (id: number,) => {
+
+
+
+
+  return `/api/history/${id}`
+}
+
+/**
+ * @summary Delete a scan record
+ */
+export const deleteScan = async (id: number, options?: RequestInit): Promise<DeleteResult> => {
+
+  return customFetch<DeleteResult>(getDeleteScanUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteScanMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteScan>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteScan>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteScan'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteScan>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteScan(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteScanMutationResult = NonNullable<Awaited<ReturnType<typeof deleteScan>>>
+
+    export type DeleteScanMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Delete a scan record
+ */
+export const useDeleteScan = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteScan>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof deleteScan>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getDeleteScanMutationOptions(options));
+    }
+
+export const getGetHistoryStatsUrl = () => {
+
+
+
+
+  return `/api/history/stats`
+}
+
+/**
+ * @summary Aggregate stats across all scans
+ */
+export const getHistoryStats = async ( options?: RequestInit): Promise<HistoryStats> => {
+
+  return customFetch<HistoryStats>(getGetHistoryStatsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetHistoryStatsQueryKey = () => {
+    return [
+    `/api/history/stats`
+    ] as const;
+    }
+
+
+export const getGetHistoryStatsQueryOptions = <TData = Awaited<ReturnType<typeof getHistoryStats>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getHistoryStats>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetHistoryStatsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getHistoryStats>>> = ({ signal }) => getHistoryStats({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getHistoryStats>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetHistoryStatsQueryResult = NonNullable<Awaited<ReturnType<typeof getHistoryStats>>>
+export type GetHistoryStatsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Aggregate stats across all scans
+ */
+
+export function useGetHistoryStats<TData = Awaited<ReturnType<typeof getHistoryStats>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getHistoryStats>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetHistoryStatsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
 

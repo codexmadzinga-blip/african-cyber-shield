@@ -9,7 +9,6 @@ import * as zod from 'zod';
 
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
@@ -18,7 +17,6 @@ export const HealthCheckResponse = zod.object({
 
 
 /**
- * Runs heuristic analysis on a URL and returns a risk score, verdict, and list of flags.
  * @summary Analyze a URL for phishing indicators
  */
 
@@ -44,7 +42,6 @@ export const AnalyzeUrlResponse = zod.object({
 
 
 /**
- * Runs heuristic analysis on up to 20 URLs at once.
  * @summary Analyze multiple URLs
  */
 export const analyzeUrlBatchBodyUrlsMax = 20;
@@ -69,5 +66,58 @@ export const AnalyzeUrlBatchResponseItem = zod.object({
   "details": zod.record(zod.string(), zod.unknown()).optional()
 })
 export const AnalyzeUrlBatchResponse = zod.array(AnalyzeUrlBatchResponseItem)
+
+
+/**
+ * @summary Get recent scan history
+ */
+export const getHistoryQueryLimitDefault = 50;
+export const getHistoryQueryLimitMax = 100;
+
+
+
+export const GetHistoryQueryParams = zod.object({
+  "limit": zod.coerce.number().min(1).max(getHistoryQueryLimitMax).default(getHistoryQueryLimitDefault),
+  "riskLevel": zod.coerce.string().optional()
+})
+
+export const GetHistoryResponse = zod.object({
+  "scans": zod.array(zod.object({
+  "id": zod.number(),
+  "url": zod.string(),
+  "score": zod.number(),
+  "verdict": zod.string(),
+  "riskLevel": zod.string(),
+  "flags": zod.array(zod.string()),
+  "details": zod.record(zod.string(), zod.unknown()).optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "total": zod.number()
+})
+
+
+/**
+ * @summary Delete a scan record
+ */
+export const DeleteScanParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const DeleteScanResponse = zod.object({
+  "success": zod.boolean()
+})
+
+
+/**
+ * @summary Aggregate stats across all scans
+ */
+export const GetHistoryStatsResponse = zod.object({
+  "total": zod.number(),
+  "safe": zod.number(),
+  "suspicious": zod.number(),
+  "likelyPhishing": zod.number(),
+  "phishing": zod.number(),
+  "avgScore": zod.number()
+})
 
 
