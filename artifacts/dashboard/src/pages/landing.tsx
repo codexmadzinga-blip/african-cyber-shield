@@ -363,15 +363,26 @@ export default function LandingPage() {
 
       {/* ── FOOTER ── */}
       <footer className="border-t border-white/8 py-10 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 font-bold text-white/80">
-            <Shield className="h-5 w-5 text-[hsl(173,100%,52%)]" />
-            African Cyber Shield
+        <div className="max-w-6xl mx-auto space-y-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-2 font-bold text-white/80">
+              <Shield className="h-5 w-5 text-[hsl(173,100%,52%)]" />
+              African Cyber Shield
+            </div>
+            <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/40 justify-center">
+              <Link href="/analyzer"><span className="hover:text-white/70 transition-colors cursor-pointer">Dashboard</span></Link>
+              <Link href="/about"><span className="hover:text-white/70 transition-colors cursor-pointer">About</span></Link>
+              <Link href="/contact"><span className="hover:text-white/70 transition-colors cursor-pointer">Contact</span></Link>
+              <a href="https://github.com/codexmadzinga-blip/african-cyber-shield" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition-colors">GitHub</a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition-colors">LinkedIn</a>
+            </nav>
           </div>
-          <p className="text-sm text-white/30">© 2026 African Cyber Shield. Built to protect Africa's digital future.</p>
-          <div className="flex gap-4 text-sm text-white/40">
-            <Link href="/analyzer"><span className="hover:text-white/70 transition-colors cursor-pointer">Dashboard</span></Link>
-            <Link href="/about"><span className="hover:text-white/70 transition-colors cursor-pointer">About</span></Link>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 pt-4 border-t border-white/6">
+            <p className="text-xs text-white/25">© 2026 African Cyber Shield. Built to protect Africa's digital future.</p>
+            <div className="flex gap-4 text-xs text-white/25">
+              <Link href="/terms"><span className="hover:text-white/50 transition-colors cursor-pointer">Terms of Service</span></Link>
+              <Link href="/privacy"><span className="hover:text-white/50 transition-colors cursor-pointer">Privacy Policy</span></Link>
+            </div>
           </div>
         </div>
       </footer>

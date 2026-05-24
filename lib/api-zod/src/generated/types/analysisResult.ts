@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { AnalysisResultDetails } from './analysisResultDetails';
+import type { OwaspHit } from './owaspHit';
 
 export interface AnalysisResult {
   url: string;
@@ -17,5 +18,6 @@ export interface AnalysisResult {
   verdict: string;
   riskLevel: string;
   flags: string[];
+  owaspCategories: OwaspHit[];
   details?: AnalysisResultDetails;
 }

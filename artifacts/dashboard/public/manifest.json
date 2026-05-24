@@ -1,0 +1,21 @@
+{
+  "name": "African Cyber Shield",
+  "short_name": "CyberShield",
+  "description": "Africa's cybersecurity toolkit — phishing scanner, password checker, and 2FA guides.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0f1e",
+  "theme_color": "#00c49a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["security", "utilities", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
+}

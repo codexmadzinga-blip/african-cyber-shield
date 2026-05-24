@@ -11,6 +11,9 @@ import About from "@/pages/about";
 import HistoryPage from "@/pages/history";
 import PasswordPage from "@/pages/password";
 import TwoFactorPage from "@/pages/two-factor";
+import TermsPage from "@/pages/terms";
+import PrivacyPage from "@/pages/privacy";
+import ContactPage from "@/pages/contact";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +38,15 @@ function AppRoutes() {
       </Route>
       <Route path="/about">
         <Layout><About /></Layout>
+      </Route>
+      <Route path="/contact">
+        <Layout><ContactPage /></Layout>
+      </Route>
+      <Route path="/terms">
+        <Layout><TermsPage /></Layout>
+      </Route>
+      <Route path="/privacy">
+        <Layout><PrivacyPage /></Layout>
       </Route>
       <Route component={NotFound} />
     </Switch>

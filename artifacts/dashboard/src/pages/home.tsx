@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAnalyzeUrl } from "@workspace/api-client-react";
-import { Shield, Search, AlertTriangle, CheckCircle, Info, Link as LinkIcon, AlertOctagon } from "lucide-react";
+import { Shield, Search, AlertTriangle, CheckCircle, Info, Link as LinkIcon, AlertOctagon, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -206,6 +206,26 @@ export default function Home() {
                     </div>
                   )}
                 </div>
+
+                {result.owaspCategories && result.owaspCategories.length > 0 && (
+                  <div className="pt-6 border-t">
+                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
+                      <BookOpen className="h-4 w-4" />
+                      OWASP Top 10 Categories Detected
+                    </h4>
+                    <div className="space-y-2">
+                      {result.owaspCategories.map((cat) => (
+                        <div key={cat.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/40 border border-border/50">
+                          <span className="font-mono text-xs font-bold text-primary shrink-0 mt-0.5 w-16">{cat.id}</span>
+                          <div>
+                            <p className="text-sm font-semibold">{cat.name}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{cat.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {result.details && Object.keys(result.details).length > 0 && (
                   <div className="pt-6 border-t">

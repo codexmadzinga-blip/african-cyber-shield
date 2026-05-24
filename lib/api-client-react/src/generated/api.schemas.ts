@@ -22,6 +22,12 @@ export interface BatchUrlInput {
   urls: string[];
 }
 
+export interface OwaspHit {
+  id: string;
+  name: string;
+  description: string;
+}
+
 export type AnalysisResultDetails = { [key: string]: unknown };
 
 export interface AnalysisResult {
@@ -34,6 +40,7 @@ export interface AnalysisResult {
   verdict: string;
   riskLevel: string;
   flags: string[];
+  owaspCategories: OwaspHit[];
   details?: AnalysisResultDetails;
 }
 
@@ -102,9 +109,61 @@ export interface PasswordResult {
   timeToCrack: string;
 }
 
+export interface AuthUser {
+  id: string;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  firstName: string | null;
+  /** @nullable */
+  lastName: string | null;
+  /** @nullable */
+  profileImageUrl: string | null;
+}
+
+export interface AuthUserEnvelope {
+  user: AuthUser | null;
+}
+
+export interface MobileTokenExchangeRequest {
+  /** @minLength 1 */
+  code: string;
+  /** @minLength 1 */
+  code_verifier: string;
+  /** @minLength 1 */
+  redirect_uri: string;
+  /** @minLength 1 */
+  state: string;
+  /** @minLength 1 */
+  nonce?: string;
+}
+
+export interface MobileTokenExchangeSuccess {
+  token: string;
+}
+
+export const LogoutSuccessValue = {
+  success: true,
+} as const;
+export type LogoutSuccess = typeof LogoutSuccessValue;
+
 export interface ErrorResponse {
   error: string;
 }
+
+/**
+ * Opaque session token — `Bearer <sid>`.
+ */
+export type AuthorizationSessionHeaderParameter = string;
+
+export type BeginBrowserLoginParams = {
+returnTo?: string;
+};
+
+export type HandleBrowserLoginCallbackParams = {
+code?: string;
+state?: string;
+};
 
 export type GetHistoryParams = {
 /**
